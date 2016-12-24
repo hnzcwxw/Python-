@@ -44,10 +44,10 @@ class MNTP:
         except urllib2.URLError, e:
             if hasattr(e, "reason"):
                 pass
-        pattern = re.compile('<dl class="articleV2Tag">.*?</dl>.*?<div class="hr10"></div>.*?' +
+        pattern1 = re.compile('<dl class="articleV2Tag">.*?</dl>.*?<div class="hr10"></div>.*?' +
                              '<script.*?</script>.*? <div class="hr101"></div>.*?<div class="l">.*?</div>' +
                              '.*?<div class="r">.*?<a href=\'(.*?)\'>.*?</div>', re.S)
-        items = re.findall(pattern, content)
+        items = re.findall(pattern1, content)
         if len(items) == 0:
             return None
         else:
@@ -57,11 +57,16 @@ class MNTP:
 
     # 取得美女图片的地址
     def getConten(self, page):
-        pattern = re.compile('(<strong|div)+ id=\'mouse\'.*?src="(.*?)".*?', re.S)
-        items = re.findall(pattern, page)
-
-        self.contents.append(items[0][1])
-        if items[0][0] == 'div':
+        pattern1 = re.compile('(<strong|div)+ id=\'mouse\'.*?src="(.*?)".*?', re.S)
+        pattern2 = re.compile('<p align="center">.*?<img.*?src="(.*?)".*?</p>', re.S)
+        item1 = re.findall(pattern1, page)
+        item2 = re.findall(pattern2, page)
+        if len(item1) > 0:
+            self.contents.append(item1[0][1])
+            if item1[0][0] == 'div':
+                self.endurl = False
+        else:
+            self.contents.append(item2[0])
             self.endurl = False
 
     # 保存美女图片
